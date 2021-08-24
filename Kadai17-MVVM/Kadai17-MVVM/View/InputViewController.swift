@@ -23,16 +23,42 @@ class InputViewController: UIViewController {
 
     private let viewModel: InputViewModelType = InputViewModel()
     private let disposeBag = DisposeBag()
+    private let mode: Mode
+    private let editingItemIndex: Int?
+
+    init?(coder: NSCoder, mode: Mode, editingItemIndex: Int?) {
+        self.mode = mode
+        if let index = editingItemIndex {
+            self.editingItemIndex = index
+        } else {
+            self.editingItemIndex = nil
+        }
+        super.init(coder: coder)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
         setupBinding()
+        setupMode()
     }
-    
+
+    private func setupMode() {
+        guard mode == .edit else { return }
+        viewModel.inputs.editingName(index: editingItemIndex!)
+    }
+
     private func setupBinding() {
         saveBarButton.rx.tap
             .bind(onNext: { [weak self] in
-                self?.viewModel.inputs.didTapSaveButton()
+                if self?.mode == .add {
+                    self?.viewModel.inputs.addItem()
+                } else {
+                    self?.viewModel.inputs.editItem(index: (self?.editingItemIndex)!)
+                }
             })
             .disposed(by: disposeBag)
 
@@ -56,6 +82,8 @@ class InputViewController: UIViewController {
                     self?.dismiss(animated: true, completion: nil)
                 case .reload:
                     self?.delegate?.didTapSaveButton()
+                case .setName(let name):
+                    self?.nameTextField.text = name
                 }
             })
             .disposed(by: disposeBag)
@@ -63,9 +91,10 @@ class InputViewController: UIViewController {
 }
 
 extension InputViewController {
-    static func instantiate() -> InputViewController {
+    static func instantiate(mode: Mode, editingItemIndex: Int?) -> InputViewController {
         UIStoryboard(name: "Input", bundle: nil)
-            .instantiateInitialViewController()
-            as! InputViewController
+            .instantiateInitialViewController(creator: { coder in
+                InputViewController(coder: coder, mode: mode, editingItemIndex: editingItemIndex)
+            })!
     }
 }

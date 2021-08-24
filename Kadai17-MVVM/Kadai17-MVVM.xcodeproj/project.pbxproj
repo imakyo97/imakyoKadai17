@@ -23,6 +23,7 @@
 		4786DE8126D5003A00409285 /* InputViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4786DE8026D5003A00409285 /* InputViewController.swift */; };
 		4786DE8326D5022D00409285 /* InputViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4786DE8226D5022D00409285 /* InputViewModel.swift */; };
 		4786DE8526D5214200409285 /* ModelLocator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4786DE8426D5214200409285 /* ModelLocator.swift */; };
+		4786DE8926D5283000409285 /* Mode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4786DE8826D5283000409285 /* Mode.swift */; };
 		EAAAF06ED9F1F40BE13509BE /* Pods_Kadai17_MVVM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 669E99C0CBB28D39EF20DFD8 /* Pods_Kadai17_MVVM.framework */; };
 /* End PBXBuildFile section */
 
@@ -45,6 +46,7 @@
 		4786DE8026D5003A00409285 /* InputViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputViewController.swift; sourceTree = "<group>"; };
 		4786DE8226D5022D00409285 /* InputViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputViewModel.swift; sourceTree = "<group>"; };
 		4786DE8426D5214200409285 /* ModelLocator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelLocator.swift; sourceTree = "<group>"; };
+		4786DE8826D5283000409285 /* Mode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mode.swift; sourceTree = "<group>"; };
 		669E99C0CBB28D39EF20DFD8 /* Pods_Kadai17_MVVM.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Kadai17_MVVM.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7CF253EE6640D7AC856F1254 /* Pods-Kadai17-MVVM.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Kadai17-MVVM.debug.xcconfig"; path = "Target Support Files/Pods-Kadai17-MVVM/Pods-Kadai17-MVVM.debug.xcconfig"; sourceTree = "<group>"; };
 		B7BA7E67A4793CAF6D565A7C /* Pods-Kadai17-MVVM.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Kadai17-MVVM.release.xcconfig"; path = "Target Support Files/Pods-Kadai17-MVVM/Pods-Kadai17-MVVM.release.xcconfig"; sourceTree = "<group>"; };
@@ -111,6 +113,7 @@
 		4786DE6A26D4F4BC00409285 /* ViewModel */ = {
 			isa = PBXGroup;
 			children = (
+				4786DE8826D5283000409285 /* Mode.swift */,
 				4786DE7A26D4FC5E00409285 /* ListViewModel.swift */,
 				4786DE8226D5022D00409285 /* InputViewModel.swift */,
 			);
@@ -279,6 +282,7 @@
 			files = (
 				4786DE8526D5214200409285 /* ModelLocator.swift in Sources */,
 				4786DE8126D5003A00409285 /* InputViewController.swift in Sources */,
+				4786DE8926D5283000409285 /* Mode.swift in Sources */,
 				4786DE6F26D4F72D00409285 /* Item.swift in Sources */,
 				4786DE5626D4F42C00409285 /* AppDelegate.swift in Sources */,
 				4786DE7326D4F76800409285 /* ItemTableViewCell.swift in Sources */,

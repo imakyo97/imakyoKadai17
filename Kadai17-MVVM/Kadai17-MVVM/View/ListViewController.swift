@@ -39,8 +39,8 @@ class ListViewController: UIViewController {
         viewModel.outputs.event
             .drive(onNext: { [weak self] event in
                 switch event {
-                case .presentInputVC:
-                    let inputViewController = InputViewController.instantiate()
+                case .presentInputVC(let mode, let index):
+                    let inputViewController = InputViewController.instantiate(mode: mode, editingItemIndex: index)
                     inputViewController.delegate = self
                     let navigationController = UINavigationController(rootViewController: inputViewController)
                     self?.present(navigationController, animated: true, completion: nil)
@@ -67,5 +67,9 @@ extension ListViewController: InputViewControllerDelegate {
 extension ListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         viewModel.inputs.didTapItem(index: indexPath.row)
+    }
+
+    func tableView(_ tableView: UITableView, accessoryButtonTappedForRowWith indexPath: IndexPath) {
+        viewModel.inputs.didTapaccessoryButton(index: indexPath.row)
     }
 }

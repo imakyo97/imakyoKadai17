@@ -12,6 +12,7 @@ protocol ListViewModelInput {
     func loadList()
     func didTapAddButton()
     func didTapItem(index: Int)
+    func didTapaccessoryButton(index: Int)
 }
 
 protocol ListViewModelOutput {
@@ -26,7 +27,7 @@ protocol ListViewModelType {
 
 final class ListViewModel: ListViewModelInput, ListViewModelOutput {
     enum Event {
-        case presentInputVC
+        case presentInputVC(Mode, Int?)
     }
 
     private let model: ItemsListModel = ModelLocator.share.model
@@ -60,12 +61,16 @@ final class ListViewModel: ListViewModelInput, ListViewModelOutput {
     }
 
     func didTapAddButton() {
-        eventRelay.accept(.presentInputVC)
+        eventRelay.accept(.presentInputVC(.add, nil))
     }
 
     func didTapItem(index: Int) {
         model.toggle(index: index)
         itemsRelay.accept(items)
+    }
+
+    func didTapaccessoryButton(index: Int) {
+        eventRelay.accept(.presentInputVC(.edit, index))
     }
 }
 

@@ -12,6 +12,7 @@ protocol ItemsListModel {
     var itemsObservable: Observable<[Item]> { get }
     func addItem(item: Item)
     func toggle(index: Int)
+    func editName(index: Int, name: String)
 }
 
 final class ItemsList: ItemsListModel {
@@ -42,6 +43,11 @@ final class ItemsList: ItemsListModel {
 
     func toggle(index: Int) {
         items[index].isChecked.toggle()
+        itemsRelay.accept(items)
+    }
+
+    func editName(index: Int, name: String) {
+        items[index].name = name
         itemsRelay.accept(items)
     }
 }

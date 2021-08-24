@@ -54,11 +54,18 @@ class ListViewController: UIViewController {
             ItemTableViewCell.nib,
             forCellReuseIdentifier: ItemTableViewCell.identifier
         )
+        itemTableView.rx.setDelegate(self).disposed(by: disposeBag)
     }
 }
 
 extension ListViewController: InputViewControllerDelegate {
     func didTapSaveButton() {
         viewModel.inputs.loadList()
+    }
+}
+
+extension ListViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        viewModel.inputs.didTapItem(index: indexPath.row)
     }
 }

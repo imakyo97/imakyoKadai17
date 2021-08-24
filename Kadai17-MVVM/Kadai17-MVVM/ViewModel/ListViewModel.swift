@@ -11,6 +11,7 @@ import RxCocoa
 protocol ListViewModelInput {
     func loadList()
     func didTapAddButton()
+    func didTapItem(index: Int)
 }
 
 protocol ListViewModelOutput {
@@ -60,6 +61,11 @@ final class ListViewModel: ListViewModelInput, ListViewModelOutput {
 
     func didTapAddButton() {
         eventRelay.accept(.presentInputVC)
+    }
+
+    func didTapItem(index: Int) {
+        model.toggle(index: index)
+        itemsRelay.accept(items)
     }
 }
 

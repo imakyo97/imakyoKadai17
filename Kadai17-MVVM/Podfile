@@ -7,4 +7,7 @@ target 'Kadai17-MVVM' do
 
   # Pods for Kadai17-MVVM
 
+pod'RxSwift'
+pod'RxCocoa'
+pod'SwiftLint'
 end

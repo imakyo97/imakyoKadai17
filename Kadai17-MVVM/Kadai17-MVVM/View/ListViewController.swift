@@ -6,24 +6,34 @@
 //
 
 import UIKit
+import RxSwift
+import RxCocoa
 
 class ListViewController: UIViewController {
 
+    @IBOutlet private weak var itemTableView: UITableView!
+
+    private let viewModel: ListViewModelType = ListViewModel()
+    private let disposeBag = DisposeBag()
+    private let dataSource = ItemDataSource()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+        setupTableView()
+        setupBinding()
+        viewModel.inputs.loadList()
     }
-    
 
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    private func setupBinding() {
+        viewModel.outputs.items
+            .bind(to: itemTableView.rx.items(dataSource: dataSource))
+            .disposed(by: disposeBag)
     }
-    */
 
+    private func setupTableView() {
+        itemTableView.register(
+            ItemTableViewCell.nib,
+            forCellReuseIdentifier: ItemTableViewCell.identifier
+        )
+    }
 }

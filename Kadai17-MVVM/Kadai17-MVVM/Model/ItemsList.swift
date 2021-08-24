@@ -5,10 +5,12 @@
 //  Created by 今村京平 on 2021/08/24.
 //
 
-import Foundation
+import RxSwift
+import RxCocoa
 
 protocol ItemsListModel {
-    var items: [Item] { get }
+    var itemsObservable: Observable<[Item]> { get }
+    func addItem(item: Item)
 }
 
 final class ItemsList: ItemsListModel {
@@ -19,10 +21,21 @@ final class ItemsList: ItemsListModel {
         static let pineapple = "パイナップル"
     }
 
-    var items: [Item] = [
+    private var items: [Item] = [
         Item(isChecked: false, name: Fruits.apple),
         Item(isChecked: true, name: Fruits.orange),
         Item(isChecked: false, name: Fruits.banana),
         Item(isChecked: true, name: Fruits.pineapple)
     ]
+
+    private lazy var itemsRelay = BehaviorRelay<[Item]>(value: items)
+
+    var itemsObservable: Observable<[Item]> {
+        itemsRelay.asObservable()
+    }
+
+    func addItem(item: Item) {
+        items.append(item)
+        itemsRelay.accept(items)
+    }
 }

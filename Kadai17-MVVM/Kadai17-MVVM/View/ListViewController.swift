@@ -12,6 +12,7 @@ import RxCocoa
 class ListViewController: UIViewController {
 
     @IBOutlet private weak var itemTableView: UITableView!
+    @IBOutlet private weak var addBarButton: UIBarButtonItem!
 
     private let viewModel: ListViewModelType = ListViewModel()
     private let disposeBag = DisposeBag()
@@ -25,8 +26,26 @@ class ListViewController: UIViewController {
     }
 
     private func setupBinding() {
-        viewModel.outputs.items
+        addBarButton.rx.tap
+            .bind(onNext: { [weak self] in
+                self?.viewModel.inputs.didTapAddButton()
+            })
+            .disposed(by: disposeBag)
+
+        viewModel.outputs.itemsObservable
             .bind(to: itemTableView.rx.items(dataSource: dataSource))
+            .disposed(by: disposeBag)
+
+        viewModel.outputs.event
+            .drive(onNext: { [weak self] event in
+                switch event {
+                case .presentInputVC:
+                    let inputViewController = InputViewController.instantiate()
+                    inputViewController.delegate = self
+                    let navigationController = UINavigationController(rootViewController: inputViewController)
+                    self?.present(navigationController, animated: true, completion: nil)
+                }
+            })
             .disposed(by: disposeBag)
     }
 
@@ -35,5 +54,11 @@ class ListViewController: UIViewController {
             ItemTableViewCell.nib,
             forCellReuseIdentifier: ItemTableViewCell.identifier
         )
+    }
+}
+
+extension ListViewController: InputViewControllerDelegate {
+    func didTapSaveButton() {
+        viewModel.inputs.loadList()
     }
 }

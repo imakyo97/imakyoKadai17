@@ -10,10 +10,12 @@ import RxCocoa
 
 protocol ListViewModelInput {
     func loadList()
+    func didTapAddButton()
 }
 
 protocol ListViewModelOutput {
-    var items: Observable<[Item]> { get }
+    var itemsObservable: Observable<[Item]> { get }
+    var event: Driver<ListViewModel.Event> { get }
 }
 
 protocol ListViewModelType {
@@ -22,16 +24,42 @@ protocol ListViewModelType {
 }
 
 final class ListViewModel: ListViewModelInput, ListViewModelOutput {
+    enum Event {
+        case presentInputVC
+    }
 
-    private let model: ItemsListModel = ItemsList()
+    private let model: ItemsListModel = ModelLocator.share.model
     private let itemsRelay = PublishRelay<[Item]>()
+    private let eventRelay = PublishRelay<Event>()
+    private var items: [Item] = []
+    private let disposeBag = DisposeBag()
 
-    var items: Observable<[Item]> {
+    init() {
+        setupBinding()
+    }
+
+    private func setupBinding() {
+        model.itemsObservable
+            .subscribe(onNext: { [weak self] items in
+                self?.items = items
+            })
+            .disposed(by: disposeBag)
+    }
+
+    var itemsObservable: Observable<[Item]> {
         itemsRelay.asObservable()
     }
 
+    var event: Driver<Event> {
+        eventRelay.asDriver(onErrorDriveWith: .empty())
+    }
+    
     func loadList() {
-        itemsRelay.accept(model.items)
+        itemsRelay.accept(items)
+    }
+
+    func didTapAddButton() {
+        eventRelay.accept(.presentInputVC)
     }
 }
 

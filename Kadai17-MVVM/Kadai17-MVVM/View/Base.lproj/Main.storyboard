@@ -34,6 +34,7 @@
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="BCB-j8-XEp"/>
                     </navigationItem>
                     <connections>
+                        <outlet property="addBarButton" destination="BCB-j8-XEp" id="DJa-zw-jaF"/>
                         <outlet property="itemTableView" destination="oA1-jq-P3J" id="vKh-PZ-bqA"/>
                     </connections>
                 </viewController>

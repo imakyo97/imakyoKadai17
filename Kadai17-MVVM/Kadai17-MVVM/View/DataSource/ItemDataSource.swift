@@ -9,10 +9,16 @@ import UIKit
 import RxSwift
 import RxCocoa
 
+protocol ItemDataSourceDelegate: AnyObject {
+    func didDeleteCell(indexRow: Int)
+}
+
 final class ItemDataSource: NSObject, UITableViewDataSource, RxTableViewDataSourceType {
 
     typealias Element = [Item]
     var items: Element = []
+
+    weak var delegate: ItemDataSourceDelegate?
 
     // MARK: - UITableViewDataSource
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -25,6 +31,14 @@ final class ItemDataSource: NSObject, UITableViewDataSource, RxTableViewDataSour
             as! ItemTableViewCell
         cell.configure(item: items[indexPath.row])
         return cell
+    }
+
+    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return true
+    }
+
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        delegate?.didDeleteCell(indexRow: indexPath.row)
     }
 
     // MARK: - RxTableViewDataSourceType

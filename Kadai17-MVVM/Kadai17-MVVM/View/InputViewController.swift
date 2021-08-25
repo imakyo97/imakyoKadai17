@@ -38,6 +38,7 @@ class InputViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: - viewDidLoad
     override func viewDidLoad() {
         super.viewDidLoad()
         setupBinding()

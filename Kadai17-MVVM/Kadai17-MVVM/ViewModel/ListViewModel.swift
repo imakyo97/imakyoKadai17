@@ -12,6 +12,7 @@ protocol ListViewModelInput {
     func didTapAddButton()
     func didTapItem(index: Int)
     func didTapaccessoryButton(index: Int)
+    func didTapDelete(index: Int)
 }
 
 protocol ListViewModelOutput {
@@ -50,8 +51,13 @@ final class ListViewModel: ListViewModelInput, ListViewModelOutput {
     func didTapaccessoryButton(index: Int) {
         eventRelay.accept(.presentInputVC(.edit, index))
     }
+
+    func didTapDelete(index: Int) {
+        model.deleteItem(index: index)
+    }
 }
 
+// MARK: - ListViewModelType
 extension ListViewModel: ListViewModelType {
     var inputs: ListViewModelInput {
         return self

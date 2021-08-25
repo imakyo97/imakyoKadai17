@@ -17,9 +17,11 @@ class ListViewController: UIViewController {
     private let viewModel: ListViewModelType = ListViewModel()
     private let disposeBag = DisposeBag()
     private let dataSource = ItemDataSource()
-    
+
+    // MARK: - viewDidLoad
     override func viewDidLoad() {
         super.viewDidLoad()
+        dataSource.delegate = self
         setupBinding()
         setupTableView()
     }
@@ -56,6 +58,7 @@ class ListViewController: UIViewController {
     }
 }
 
+// MARK: - UITableViewDelegate
 extension ListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         viewModel.inputs.didTapItem(index: indexPath.row)
@@ -63,5 +66,12 @@ extension ListViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, accessoryButtonTappedForRowWith indexPath: IndexPath) {
         viewModel.inputs.didTapaccessoryButton(index: indexPath.row)
+    }
+}
+
+// MARK: - ItemDataSourceDelegate
+extension ListViewController: ItemDataSourceDelegate {
+    func didDeleteCell(indexRow: Int) {
+        viewModel.inputs.didTapDelete(index: indexRow)
     }
 }

@@ -71,6 +71,7 @@ final class InputViewModel: InputViewModelInput, InputViewModelOutput {
     }
 }
 
+// MARK: - InputViewModelType
 extension InputViewModel: InputViewModelType {
     var inputs: InputViewModelInput {
         return self

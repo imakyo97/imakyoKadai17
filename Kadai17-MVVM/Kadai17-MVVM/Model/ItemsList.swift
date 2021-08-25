@@ -13,6 +13,7 @@ protocol ItemsListModel {
     func addItem(item: Item)
     func toggle(index: Int)
     func editName(index: Int, name: String)
+    func deleteItem(index: Int)
 }
 
 final class ItemsList: ItemsListModel {
@@ -48,6 +49,11 @@ final class ItemsList: ItemsListModel {
 
     func editName(index: Int, name: String) {
         items[index].name = name
+        itemsRelay.accept(items)
+    }
+
+    func deleteItem(index: Int) {
+        items.remove(at: index)
         itemsRelay.accept(items)
     }
 }

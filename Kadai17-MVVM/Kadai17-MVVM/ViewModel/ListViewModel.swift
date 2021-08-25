@@ -9,7 +9,6 @@ import RxSwift
 import RxCocoa
 
 protocol ListViewModelInput {
-    func loadList()
     func didTapAddButton()
     func didTapItem(index: Int)
     func didTapaccessoryButton(index: Int)
@@ -31,33 +30,13 @@ final class ListViewModel: ListViewModelInput, ListViewModelOutput {
     }
 
     private let model: ItemsListModel = ModelLocator.share.model
-    private let itemsRelay = PublishRelay<[Item]>()
     private let eventRelay = PublishRelay<Event>()
-    private var items: [Item] = []
     private let disposeBag = DisposeBag()
 
-    init() {
-        setupBinding()
-    }
-
-    private func setupBinding() {
-        model.itemsObservable
-            .subscribe(onNext: { [weak self] items in
-                self?.items = items
-            })
-            .disposed(by: disposeBag)
-    }
-
-    var itemsObservable: Observable<[Item]> {
-        itemsRelay.asObservable()
-    }
+    lazy var itemsObservable: Observable<[Item]> = model.itemsObservable
 
     var event: Driver<Event> {
         eventRelay.asDriver(onErrorDriveWith: .empty())
-    }
-    
-    func loadList() {
-        itemsRelay.accept(items)
     }
 
     func didTapAddButton() {
@@ -66,7 +45,6 @@ final class ListViewModel: ListViewModelInput, ListViewModelOutput {
 
     func didTapItem(index: Int) {
         model.toggle(index: index)
-        itemsRelay.accept(items)
     }
 
     func didTapaccessoryButton(index: Int) {

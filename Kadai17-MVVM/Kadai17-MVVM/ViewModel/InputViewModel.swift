@@ -26,7 +26,6 @@ protocol InputViewModelType {
 final class InputViewModel: InputViewModelInput, InputViewModelOutput {
     enum Event {
         case dismiss
-        case reload
         case setName(String)
     }
 
@@ -64,7 +63,6 @@ final class InputViewModel: InputViewModelInput, InputViewModelOutput {
             model.editName(index: index!, name: nameText)
         }
         eventRelay.accept(.dismiss)
-        eventRelay.accept(.reload)
     }
 
     func editingName(index: Int) {

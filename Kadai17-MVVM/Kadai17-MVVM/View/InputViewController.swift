@@ -9,10 +9,6 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-protocol InputViewControllerDelegate: AnyObject {
-    func didTapSaveButton()
-}
-
 class InputViewController: UIViewController {
     enum Mode {
         case add
@@ -22,8 +18,6 @@ class InputViewController: UIViewController {
     @IBOutlet private weak var saveBarButton: UIBarButtonItem!
     @IBOutlet private weak var cancelBarButton: UIBarButtonItem!
     @IBOutlet private weak var nameTextField: UITextField!
-
-    weak var delegate: InputViewControllerDelegate?
 
     private let viewModel: InputViewModelType = InputViewModel()
     private let disposeBag = DisposeBag()
@@ -79,8 +73,6 @@ class InputViewController: UIViewController {
                 switch event {
                 case .dismiss:
                     self?.dismiss(animated: true, completion: nil)
-                case .reload:
-                    self?.delegate?.didTapSaveButton()
                 case .setName(let name):
                     self?.nameTextField.text = name
                 }

@@ -20,9 +20,8 @@ class ListViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupTableView()
         setupBinding()
-        viewModel.inputs.loadList()
+        setupTableView()
     }
 
     private func setupBinding() {
@@ -41,7 +40,6 @@ class ListViewController: UIViewController {
                 switch event {
                 case .presentInputVC(let mode, let index):
                     let inputViewController = InputViewController.instantiate(mode: mode, editingItemIndex: index)
-                    inputViewController.delegate = self
                     let navigationController = UINavigationController(rootViewController: inputViewController)
                     self?.present(navigationController, animated: true, completion: nil)
                 }
@@ -55,12 +53,6 @@ class ListViewController: UIViewController {
             forCellReuseIdentifier: ItemTableViewCell.identifier
         )
         itemTableView.rx.setDelegate(self).disposed(by: disposeBag)
-    }
-}
-
-extension ListViewController: InputViewControllerDelegate {
-    func didTapSaveButton() {
-        viewModel.inputs.loadList()
     }
 }
 

@@ -65,13 +65,16 @@ extension ListViewController: UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, accessoryButtonTappedForRowWith indexPath: IndexPath) {
-        viewModel.inputs.didTapaccessoryButton(index: indexPath.row)
+        viewModel.inputs.didTapAccessoryButton(index: indexPath.row)
     }
 }
 
 // MARK: - ItemDataSourceDelegate
+// 自作delegate
 extension ListViewController: ItemDataSourceDelegate {
+
+    // cellの削除を通知するメソッド
     func didDeleteCell(indexRow: Int) {
-        viewModel.inputs.didTapDelete(index: indexRow)
+        viewModel.inputs.didDeleteCell(index: indexRow)
     }
 }

@@ -10,6 +10,8 @@ import RxSwift
 import RxCocoa
 
 protocol ItemDataSourceDelegate: AnyObject {
+
+    // cellの削除を通知するメソッド
     func didDeleteCell(indexRow: Int)
 }
 
@@ -28,17 +30,21 @@ final class ItemDataSource: NSObject, UITableViewDataSource, RxTableViewDataSour
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(
             withIdentifier: ItemTableViewCell.identifier)
-            as! ItemTableViewCell
+            as! ItemTableViewCell // swiftlint:disable:this force_cast
         cell.configure(item: items[indexPath.row])
         return cell
     }
 
     func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        return true
+        return true // cellの変更を許可する
     }
 
-    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        delegate?.didDeleteCell(indexRow: indexPath.row)
+    func tableView(_ tableView: UITableView,
+                   commit editingStyle: UITableViewCell.EditingStyle,
+                   forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            delegate?.didDeleteCell(indexRow: indexPath.row)
+        }
     }
 
     // MARK: - RxTableViewDataSourceType
@@ -50,4 +56,3 @@ final class ItemDataSource: NSObject, UITableViewDataSource, RxTableViewDataSour
         .on(observedEvent)
     }
 }
-

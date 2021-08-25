@@ -14,6 +14,10 @@ protocol InputViewControllerDelegate: AnyObject {
 }
 
 class InputViewController: UIViewController {
+    enum Mode {
+        case add
+        case edit
+    }
 
     @IBOutlet private weak var saveBarButton: UIBarButtonItem!
     @IBOutlet private weak var cancelBarButton: UIBarButtonItem!
@@ -54,24 +58,19 @@ class InputViewController: UIViewController {
     private func setupBinding() {
         saveBarButton.rx.tap
             .bind(onNext: { [weak self] in
-                if self?.mode == .add {
-                    self?.viewModel.inputs.addItem()
-                } else {
-                    self?.viewModel.inputs.editItem(index: (self?.editingItemIndex)!)
-                }
+                guard let nameText = self?.nameTextField.text else { return }
+                guard nameText != "" else { return }
+                self?.viewModel.inputs.didTapSaveButton(
+                    mode: self!.mode,
+                    nameText: nameText,
+                    index: self?.editingItemIndex
+                )
             })
             .disposed(by: disposeBag)
 
         cancelBarButton.rx.tap
             .bind(onNext: { [weak self] in
                 self?.viewModel.inputs.didTapCancelButton()
-            })
-            .disposed(by: disposeBag)
-
-        nameTextField.rx.text
-            .bind(onNext: { [weak self] nameText in
-                guard let nameText = nameText else { return }
-                self?.viewModel.inputs.nameTextRelay.accept(nameText)
             })
             .disposed(by: disposeBag)
 

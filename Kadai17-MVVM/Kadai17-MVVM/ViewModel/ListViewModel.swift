@@ -27,7 +27,7 @@ protocol ListViewModelType {
 
 final class ListViewModel: ListViewModelInput, ListViewModelOutput {
     enum Event {
-        case presentInputVC(Mode, Int?)
+        case presentInputVC(InputViewController.Mode, Int?)
     }
 
     private let model: ItemsListModel = ModelLocator.share.model

@@ -10,9 +10,7 @@ import RxCocoa
 
 protocol InputViewModelInput {
     func didTapCancelButton()
-    func addItem()
-    func editItem(index: Int)
-    var nameTextRelay: PublishRelay<String> { get }
+    func didTapSaveButton(mode: InputViewController.Mode, nameText: String, index: Int?)
     func editingName(index: Int)
 }
 
@@ -36,7 +34,6 @@ final class InputViewModel: InputViewModelInput, InputViewModelOutput {
     private let eventRelay = PublishRelay<Event>()
     private let disposeBag = DisposeBag()
     private var items: [Item] = []
-    private var nameText: String = ""
 
     init() {
         setupBinding()
@@ -48,15 +45,7 @@ final class InputViewModel: InputViewModelInput, InputViewModelOutput {
                 self?.items = items
             })
             .disposed(by: disposeBag)
-
-        nameTextRelay
-            .bind(onNext: { [weak self] nameText in
-                self?.nameText = nameText
-            })
-            .disposed(by: disposeBag)
     }
-
-    var nameTextRelay = PublishRelay<String>()
 
     var event: Driver<Event> {
         return eventRelay.asDriver(onErrorDriveWith: .empty())
@@ -66,9 +55,14 @@ final class InputViewModel: InputViewModelInput, InputViewModelOutput {
         eventRelay.accept(.dismiss)
     }
 
-    func addItem() {
-        let item = Item(isChecked: false, name: nameText)
-        model.addItem(item: item)
+    func didTapSaveButton(mode: InputViewController.Mode, nameText: String, index: Int?) {
+        switch mode {
+        case .add:
+            let item = Item(isChecked: false, name: nameText)
+            model.addItem(item: item)
+        case .edit:
+            model.editName(index: index!, name: nameText)
+        }
         eventRelay.accept(.dismiss)
         eventRelay.accept(.reload)
     }
@@ -76,13 +70,6 @@ final class InputViewModel: InputViewModelInput, InputViewModelOutput {
     func editingName(index: Int) {
         let name = items[index].name
         eventRelay.accept(.setName(name))
-        nameText = name
-    }
-
-    func editItem(index: Int) {
-        model.editName(index: index, name: nameText)
-        eventRelay.accept(.dismiss)
-        eventRelay.accept(.reload)
     }
 }
 

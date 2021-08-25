@@ -26,11 +26,7 @@ class InputViewController: UIViewController {
 
     init?(coder: NSCoder, mode: Mode, editingItemIndex: Int?) {
         self.mode = mode
-        if let index = editingItemIndex {
-            self.editingItemIndex = index
-        } else {
-            self.editingItemIndex = nil
-        }
+        self.editingItemIndex = editingItemIndex
         super.init(coder: coder)
     }
 

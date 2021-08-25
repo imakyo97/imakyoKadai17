@@ -6,7 +6,7 @@
 //
 
 import RxSwift
-import RxCocoa
+import RxRelay
 
 protocol ItemsListModel {
     var itemsObservable: Observable<[Item]> { get }

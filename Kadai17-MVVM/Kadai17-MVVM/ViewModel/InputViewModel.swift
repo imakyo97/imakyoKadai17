@@ -29,7 +29,7 @@ final class InputViewModel: InputViewModelInput, InputViewModelOutput {
         case setName(String)
     }
 
-    private let model: ItemsListModel = ModelLocator.share.model
+    private let model: ItemsListModel = ModelLocator.share.model // modelを共有
     private let eventRelay = PublishRelay<Event>()
     private let disposeBag = DisposeBag()
     private var items: [Item] = []

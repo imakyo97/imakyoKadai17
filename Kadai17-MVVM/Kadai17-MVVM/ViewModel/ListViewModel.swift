@@ -30,7 +30,7 @@ final class ListViewModel: ListViewModelInput, ListViewModelOutput {
         case presentInputVC(InputViewController.Mode, Int?)
     }
 
-    private let model: ItemsListModel = ModelLocator.share.model
+    private let model: ItemsListModel = ModelLocator.share.model // modelを共有
     private let eventRelay = PublishRelay<Event>()
     private let disposeBag = DisposeBag()
 

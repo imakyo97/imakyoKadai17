@@ -61,7 +61,7 @@ class ListViewController: UIViewController {
 // MARK: - UITableViewDelegate
 extension ListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        viewModel.inputs.didTapItem(index: indexPath.row)
+        viewModel.inputs.didSelectRow(index: indexPath.row)
     }
 
     func tableView(_ tableView: UITableView, accessoryButtonTappedForRowWith indexPath: IndexPath) {

@@ -38,7 +38,7 @@ class ListViewController: UIViewController {
         viewModel.outputs.event
             .drive(onNext: { [weak self] event in
                 let inputViewController = InputViewController.instantiate(
-                    mode: InputViewController.Mode(event: event)
+                    mode: InputViewModel.Mode(event: event)
                 )
 
                 let navigationController = UINavigationController(rootViewController: inputViewController)
@@ -77,7 +77,7 @@ extension ListViewController: ItemDataSourceDelegate {
     }
 }
 
-private extension InputViewController.Mode {
+private extension InputViewModel.Mode {
     init(event: ListViewModel.Event) {
         switch event {
         case .presentAdd:

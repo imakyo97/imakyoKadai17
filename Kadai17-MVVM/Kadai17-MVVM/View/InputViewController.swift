@@ -10,21 +10,15 @@ import RxSwift
 import RxCocoa
 
 class InputViewController: UIViewController {
-    enum Mode {
-        case add
-        case edit(Int)
-    }
-
     @IBOutlet private weak var saveBarButton: UIBarButtonItem!
     @IBOutlet private weak var cancelBarButton: UIBarButtonItem!
     @IBOutlet private weak var nameTextField: UITextField!
 
-    private let viewModel: InputViewModelType = InputViewModel()
+    private let viewModel: InputViewModelType
     private let disposeBag = DisposeBag()
-    private let mode: Mode
 
-    init?(coder: NSCoder, mode: Mode) {
-        self.mode = mode
+    init?(coder: NSCoder, mode: InputViewModel.Mode) {
+        self.viewModel = InputViewModel(mode: mode)
         super.init(coder: coder)
     }
 
@@ -40,7 +34,7 @@ class InputViewController: UIViewController {
     }
 
     private func setupMode() {
-        switch mode {
+        switch viewModel.outputs.mode {
         case .add:
             break
         case .edit(let editingItemIndex):
@@ -54,7 +48,6 @@ class InputViewController: UIViewController {
                 guard let nameText = self?.nameTextField.text else { return }
                 guard nameText != "" else { return }
                 self?.viewModel.inputs.didTapSaveButton(
-                    mode: self!.mode,
                     nameText: nameText
                 )
             })
@@ -80,7 +73,7 @@ class InputViewController: UIViewController {
 }
 
 extension InputViewController {
-    static func instantiate(mode: Mode) -> InputViewController {
+    static func instantiate(mode: InputViewModel.Mode) -> InputViewController {
         UIStoryboard(name: "Input", bundle: nil)
             .instantiateInitialViewController(creator: { coder in
                 InputViewController(coder: coder, mode: mode)

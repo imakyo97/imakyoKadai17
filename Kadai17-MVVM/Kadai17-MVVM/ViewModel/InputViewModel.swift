@@ -10,13 +10,14 @@ import RxCocoa
 
 protocol InputViewModelInput {
     func didTapCancelButton()
-    func didTapSaveButton(mode: InputViewController.Mode, nameText: String)
+    func didTapSaveButton(nameText: String)
     func editingName(index: Int)
 }
 
 protocol InputViewModelOutput {
     var event: Driver<InputViewModel.Event> { get }
     var name: Driver<String?> { get }
+    var mode: InputViewModel.Mode { get }
 }
 
 protocol InputViewModelType {
@@ -25,6 +26,11 @@ protocol InputViewModelType {
 }
 
 final class InputViewModel: InputViewModelInput, InputViewModelOutput {
+    enum Mode {
+        case add
+        case edit(Int)
+    }
+
     enum Event {
         case dismiss
     }
@@ -39,7 +45,10 @@ final class InputViewModel: InputViewModelInput, InputViewModelOutput {
         nameRelay.asDriver()
     }
 
-    init() {
+    let mode: Mode
+
+    init(mode: Mode) {
+        self.mode = mode
         setupBinding()
     }
 
@@ -59,7 +68,7 @@ final class InputViewModel: InputViewModelInput, InputViewModelOutput {
         eventRelay.accept(.dismiss)
     }
 
-    func didTapSaveButton(mode: InputViewController.Mode, nameText: String) {
+    func didTapSaveButton(nameText: String) {
         switch mode {
         case .add:
             let item = Item(isChecked: false, name: nameText)

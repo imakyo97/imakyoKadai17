@@ -10,7 +10,7 @@ import RxCocoa
 
 protocol InputViewModelInput {
     func didTapCancelButton()
-    func didTapSaveButton(mode: InputViewController.Mode, nameText: String, index: Int?)
+    func didTapSaveButton(mode: InputViewController.Mode, nameText: String)
     func editingName(index: Int)
 }
 
@@ -29,7 +29,7 @@ final class InputViewModel: InputViewModelInput, InputViewModelOutput {
         case setName(String)
     }
 
-    private let model: ItemsListModel = ModelLocator.share.model // modelを共有
+    private let model: ItemsListModel = ModelLocator.shared.model // modelを共有
     private let eventRelay = PublishRelay<Event>()
     private let disposeBag = DisposeBag()
     private var items: [Item] = []
@@ -54,13 +54,13 @@ final class InputViewModel: InputViewModelInput, InputViewModelOutput {
         eventRelay.accept(.dismiss)
     }
 
-    func didTapSaveButton(mode: InputViewController.Mode, nameText: String, index: Int?) {
+    func didTapSaveButton(mode: InputViewController.Mode, nameText: String) {
         switch mode {
         case .add:
             let item = Item(isChecked: false, name: nameText)
             model.addItem(item: item)
-        case .edit:
-            model.editName(index: index!, name: nameText)
+        case .edit(let index):
+            model.editName(index: index, name: nameText)
         }
         eventRelay.accept(.dismiss)
     }

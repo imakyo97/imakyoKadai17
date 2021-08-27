@@ -12,7 +12,7 @@ import RxCocoa
 class InputViewController: UIViewController {
     enum Mode {
         case add
-        case edit
+        case edit(Int)
     }
 
     @IBOutlet private weak var saveBarButton: UIBarButtonItem!
@@ -22,11 +22,9 @@ class InputViewController: UIViewController {
     private let viewModel: InputViewModelType = InputViewModel()
     private let disposeBag = DisposeBag()
     private let mode: Mode
-    private let editingItemIndex: Int?
 
-    init?(coder: NSCoder, mode: Mode, editingItemIndex: Int?) {
+    init?(coder: NSCoder, mode: Mode) {
         self.mode = mode
-        self.editingItemIndex = editingItemIndex
         super.init(coder: coder)
     }
 
@@ -42,8 +40,12 @@ class InputViewController: UIViewController {
     }
 
     private func setupMode() {
-        guard mode == .edit else { return }
-        viewModel.inputs.editingName(index: editingItemIndex!)
+        switch mode {
+        case .add:
+            break
+        case .edit(let editingItemIndex):
+            viewModel.inputs.editingName(index: editingItemIndex)
+        }
     }
 
     private func setupBinding() {
@@ -53,8 +55,7 @@ class InputViewController: UIViewController {
                 guard nameText != "" else { return }
                 self?.viewModel.inputs.didTapSaveButton(
                     mode: self!.mode,
-                    nameText: nameText,
-                    index: self?.editingItemIndex
+                    nameText: nameText
                 )
             })
             .disposed(by: disposeBag)
@@ -79,10 +80,10 @@ class InputViewController: UIViewController {
 }
 
 extension InputViewController {
-    static func instantiate(mode: Mode, editingItemIndex: Int?) -> InputViewController {
+    static func instantiate(mode: Mode) -> InputViewController {
         UIStoryboard(name: "Input", bundle: nil)
             .instantiateInitialViewController(creator: { coder in
-                InputViewController(coder: coder, mode: mode, editingItemIndex: editingItemIndex)
+                InputViewController(coder: coder, mode: mode)
             })!
     }
 }

@@ -28,9 +28,7 @@ class ListViewController: UIViewController {
 
     private func setupBinding() {
         addBarButton.rx.tap
-            .bind(onNext: { [weak self] in
-                self?.viewModel.inputs.didTapAddButton()
-            })
+            .subscribe(onNext: viewModel.inputs.didTapAddButton)
             .disposed(by: disposeBag)
 
         viewModel.outputs.itemsObservable

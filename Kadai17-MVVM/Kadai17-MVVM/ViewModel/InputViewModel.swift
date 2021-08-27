@@ -16,6 +16,7 @@ protocol InputViewModelInput {
 
 protocol InputViewModelOutput {
     var event: Driver<InputViewModel.Event> { get }
+    var name: Driver<String?> { get }
 }
 
 protocol InputViewModelType {
@@ -26,13 +27,17 @@ protocol InputViewModelType {
 final class InputViewModel: InputViewModelInput, InputViewModelOutput {
     enum Event {
         case dismiss
-        case setName(String)
     }
 
     private let model: ItemsListModel = ModelLocator.shared.model // modelを共有
     private let eventRelay = PublishRelay<Event>()
     private let disposeBag = DisposeBag()
     private var items: [Item] = []
+
+    private let nameRelay = BehaviorRelay<String?>(value: "")
+    var name: Driver<String?> {
+        nameRelay.asDriver()
+    }
 
     init() {
         setupBinding()
@@ -67,7 +72,7 @@ final class InputViewModel: InputViewModelInput, InputViewModelOutput {
 
     func editingName(index: Int) {
         let name = items[index].name
-        eventRelay.accept(.setName(name))
+        nameRelay.accept(name)
     }
 }
 

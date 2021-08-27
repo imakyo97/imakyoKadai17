@@ -61,9 +61,7 @@ class InputViewController: UIViewController {
             .disposed(by: disposeBag)
 
         cancelBarButton.rx.tap
-            .bind(onNext: { [weak self] in
-                self?.viewModel.inputs.didTapCancelButton()
-            })
+            .subscribe(onNext: viewModel.inputs.didTapCancelButton)
             .disposed(by: disposeBag)
 
         viewModel.outputs.event
@@ -71,10 +69,12 @@ class InputViewController: UIViewController {
                 switch event {
                 case .dismiss:
                     self?.dismiss(animated: true, completion: nil)
-                case .setName(let name):
-                    self?.nameTextField.text = name
                 }
             })
+            .disposed(by: disposeBag)
+
+        viewModel.outputs.name
+            .drive(nameTextField.rx.text)
             .disposed(by: disposeBag)
     }
 }

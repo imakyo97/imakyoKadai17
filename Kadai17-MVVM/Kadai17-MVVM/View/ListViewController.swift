@@ -28,9 +28,7 @@ class ListViewController: UIViewController {
 
     private func setupBinding() {
         addBarButton.rx.tap
-            .bind(onNext: { [weak self] in
-                self?.viewModel.inputs.didTapAddButton()
-            })
+            .subscribe(onNext: viewModel.inputs.didTapAddButton)
             .disposed(by: disposeBag)
 
         viewModel.outputs.itemsObservable
@@ -39,12 +37,12 @@ class ListViewController: UIViewController {
 
         viewModel.outputs.event
             .drive(onNext: { [weak self] event in
-                switch event {
-                case .presentInputVC(let mode, let index):
-                    let inputViewController = InputViewController.instantiate(mode: mode, editingItemIndex: index)
-                    let navigationController = UINavigationController(rootViewController: inputViewController)
-                    self?.present(navigationController, animated: true, completion: nil)
-                }
+                let inputViewController = InputViewController.instantiate(
+                    mode: InputViewModel.Mode(event: event)
+                )
+
+                let navigationController = UINavigationController(rootViewController: inputViewController)
+                self?.present(navigationController, animated: true, completion: nil)
             })
             .disposed(by: disposeBag)
     }
@@ -76,5 +74,16 @@ extension ListViewController: ItemDataSourceDelegate {
     // cellの削除を通知するメソッド
     func didDeleteCell(indexRow: Int) {
         viewModel.inputs.didDeleteCell(index: indexRow)
+    }
+}
+
+private extension InputViewModel.Mode {
+    init(event: ListViewModel.Event) {
+        switch event {
+        case .presentAdd:
+            self = .add
+        case .presentEdit(let index):
+            self = .edit(index)
+        }
     }
 }

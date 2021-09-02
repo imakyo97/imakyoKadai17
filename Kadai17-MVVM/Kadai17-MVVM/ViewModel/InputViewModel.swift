@@ -10,12 +10,14 @@ import RxCocoa
 
 protocol InputViewModelInput {
     func didTapCancelButton()
-    func didTapSaveButton(mode: InputViewController.Mode, nameText: String, index: Int?)
+    func didTapSaveButton(nameText: String)
     func editingName(index: Int)
 }
 
 protocol InputViewModelOutput {
     var event: Driver<InputViewModel.Event> { get }
+    var name: Driver<String?> { get }
+    var mode: InputViewModel.Mode { get }
 }
 
 protocol InputViewModelType {
@@ -24,17 +26,29 @@ protocol InputViewModelType {
 }
 
 final class InputViewModel: InputViewModelInput, InputViewModelOutput {
-    enum Event {
-        case dismiss
-        case setName(String)
+    enum Mode {
+        case add
+        case edit(Int)
     }
 
-    private let model: ItemsListModel = ModelLocator.share.model // modelを共有
+    enum Event {
+        case dismiss
+    }
+
+    private let model: ItemsListModel = ModelLocator.shared.model // modelを共有
     private let eventRelay = PublishRelay<Event>()
     private let disposeBag = DisposeBag()
     private var items: [Item] = []
 
-    init() {
+    private let nameRelay = BehaviorRelay<String?>(value: "")
+    var name: Driver<String?> {
+        nameRelay.asDriver()
+    }
+
+    let mode: Mode
+
+    init(mode: Mode) {
+        self.mode = mode
         setupBinding()
     }
 
@@ -54,20 +68,20 @@ final class InputViewModel: InputViewModelInput, InputViewModelOutput {
         eventRelay.accept(.dismiss)
     }
 
-    func didTapSaveButton(mode: InputViewController.Mode, nameText: String, index: Int?) {
+    func didTapSaveButton(nameText: String) {
         switch mode {
         case .add:
             let item = Item(isChecked: false, name: nameText)
             model.addItem(item: item)
-        case .edit:
-            model.editName(index: index!, name: nameText)
+        case .edit(let index):
+            model.editName(index: index, name: nameText)
         }
         eventRelay.accept(.dismiss)
     }
 
     func editingName(index: Int) {
         let name = items[index].name
-        eventRelay.accept(.setName(name))
+        nameRelay.accept(name)
     }
 }
 

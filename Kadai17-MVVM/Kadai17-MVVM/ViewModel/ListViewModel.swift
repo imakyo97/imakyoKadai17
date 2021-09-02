@@ -27,31 +27,33 @@ protocol ListViewModelType {
 
 final class ListViewModel: ListViewModelInput, ListViewModelOutput {
     enum Event {
-        case presentInputVC(InputViewController.Mode, Int?)
+        // addでindexがある、というあり得ないパターンを除外するため、2つのcaseに置き換えました
+        case presentAdd
+        case presentEdit(Int)
     }
-
-    private let model: ItemsListModel = ModelLocator.share.model // modelを共有
+    
+    private let model: ItemsListModel = ModelLocator.shared.model // modelを共有
     private let eventRelay = PublishRelay<Event>()
     private let disposeBag = DisposeBag()
-
+    
     lazy var itemsObservable: Observable<[Item]> = model.itemsObservable
-
+    
     var event: Driver<Event> {
         eventRelay.asDriver(onErrorDriveWith: .empty())
     }
-
+    
     func didTapAddButton() {
-        eventRelay.accept(.presentInputVC(.add, nil))
+        eventRelay.accept(.presentAdd)
     }
-
+    
     func didSelectRow(index: Int) {
         model.toggle(index: index)
     }
-
+    
     func didTapAccessoryButton(index: Int) {
-        eventRelay.accept(.presentInputVC(.edit, index))
+        eventRelay.accept(.presentEdit(index))
     }
-
+    
     func didDeleteCell(index: Int) {
         model.deleteItem(index: index)
     }
@@ -62,7 +64,7 @@ extension ListViewModel: ListViewModelType {
     var inputs: ListViewModelInput {
         return self
     }
-
+    
     var outputs: ListViewModelOutput {
         return self
     }

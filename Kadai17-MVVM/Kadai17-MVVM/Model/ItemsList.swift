@@ -23,36 +23,41 @@ final class ItemsList: ItemsListModel {
         static let banana = "バナナ"
         static let pineapple = "パイナップル"
     }
-
-    private var items: [Item] = [
-        Item(isChecked: false, name: Fruits.apple),
-        Item(isChecked: true, name: Fruits.orange),
-        Item(isChecked: false, name: Fruits.banana),
-        Item(isChecked: true, name: Fruits.pineapple)
-    ]
-
-    private lazy var itemsRelay = BehaviorRelay<[Item]>(value: items)
-
+    
+    // 状態の二重管理を避けるため、itemsRelayに一本化しました
+    private lazy var itemsRelay = BehaviorRelay<[Item]>(
+        value: [
+            Item(isChecked: false, name: Fruits.apple),
+            Item(isChecked: true, name: Fruits.orange),
+            Item(isChecked: false, name: Fruits.banana),
+            Item(isChecked: true, name: Fruits.pineapple)
+        ]
+    )
+    
     var itemsObservable: Observable<[Item]> {
         itemsRelay.asObservable()
     }
-
+    
     func addItem(item: Item) {
+        var items = itemsRelay.value
         items.append(item)
         itemsRelay.accept(items)
     }
-
+    
     func toggle(index: Int) {
+        var items = itemsRelay.value
         items[index].isChecked.toggle()
         itemsRelay.accept(items)
     }
-
+    
     func editName(index: Int, name: String) {
+        var items = itemsRelay.value
         items[index].name = name
         itemsRelay.accept(items)
     }
-
+    
     func deleteItem(index: Int) {
+        var items = itemsRelay.value
         items.remove(at: index)
         itemsRelay.accept(items)
     }

@@ -10,12 +10,19 @@ import RxCocoa
 
 protocol InputViewModelInput {
     func didTapCancelButton()
-    func didTapSaveButton(mode: InputViewController.Mode, nameText: String, index: Int?)
+    // didTapSaveButtonはnameTextを持つだけにする
+    func didTapSaveButton(nameText: String)
     func editingName(index: Int)
 }
 
 protocol InputViewModelOutput {
     var event: Driver<InputViewModel.Event> { get }
+    
+    // テキストフィールドの更新はEventではなく専用のDriverで行うようにしました。
+    var name: Driver<String?> { get }
+    
+    // InputViewControllerでModeで条件分岐させる
+    var mode: InputViewModel.Mode { get }
 }
 
 protocol InputViewModelType {
@@ -24,20 +31,35 @@ protocol InputViewModelType {
 }
 
 final class InputViewModel: InputViewModelInput, InputViewModelOutput {
+    // InputViewModeにModeを移動しました。
+    enum Mode {
+        case add
+        case edit(Int)
+    }
+    
     enum Event {
         case dismiss
-        case setName(String)
     }
-
-    private let model: ItemsListModel = ModelLocator.share.model // modelを共有
+    
+    private let model: ItemsListModel = ModelLocator.shared.model // modelを共有
     private let eventRelay = PublishRelay<Event>()
     private let disposeBag = DisposeBag()
     private var items: [Item] = []
-
-    init() {
+    
+    // テキストフィールドの更新はEventではなく専用のDriverで行うようにしました。
+    private let nameRelay = BehaviorRelay<String?>(value: "")
+    var name: Driver<String?> {
+        nameRelay.asDriver()
+    }
+    
+    // InputViewModelでモードを管理する
+    let mode: Mode
+    
+    init(mode: Mode) {
+        self.mode = mode
         setupBinding()
     }
-
+    
     private func setupBinding() {
         model.itemsObservable
             .subscribe(onNext: { [weak self] items in
@@ -45,29 +67,29 @@ final class InputViewModel: InputViewModelInput, InputViewModelOutput {
             })
             .disposed(by: disposeBag)
     }
-
+    
     var event: Driver<Event> {
         return eventRelay.asDriver(onErrorDriveWith: .empty())
     }
-
+    
     func didTapCancelButton() {
         eventRelay.accept(.dismiss)
     }
-
-    func didTapSaveButton(mode: InputViewController.Mode, nameText: String, index: Int?) {
+    
+    func didTapSaveButton(nameText: String) {
         switch mode {
         case .add:
             let item = Item(isChecked: false, name: nameText)
             model.addItem(item: item)
-        case .edit:
-            model.editName(index: index!, name: nameText)
+        case .edit(let index):
+            model.editName(index: index, name: nameText)
         }
         eventRelay.accept(.dismiss)
     }
-
+    
     func editingName(index: Int) {
         let name = items[index].name
-        eventRelay.accept(.setName(name))
+        nameRelay.accept(name)
     }
 }
 
@@ -76,7 +98,7 @@ extension InputViewModel: InputViewModelType {
     var inputs: InputViewModelInput {
         return self
     }
-
+    
     var outputs: InputViewModelOutput {
         return self
     }
